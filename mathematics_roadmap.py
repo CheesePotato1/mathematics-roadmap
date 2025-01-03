@@ -1,6 +1,3 @@
-streamlit==1.31.0
-networkx==3.2.1
-matplotlib==3.8.2
 import streamlit as st
 from mathematics_roadmap import create_math_roadmap, draw_math_roadmap
 
