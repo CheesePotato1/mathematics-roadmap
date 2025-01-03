@@ -1,3 +1,126 @@
+streamlit==1.31.0
+networkx==3.2.1
+matplotlib==3.8.2
+import streamlit as st
+from mathematics_roadmap import create_math_roadmap, draw_math_roadmap
+
+st.set_page_config(layout="wide", page_title="Mathematics Learning Roadmap")
+
+st.title("Mathematics Learning Roadmap")
+
+# Create and display the graph
+G = create_math_roadmap()
+fig = draw_math_roadmap(G)
+
+# Display the plot in Streamlit
+st.pyplot(fig)
+
+# Add book recommendations section
+st.header("Book Recommendations by Subject")
+
+# Get all subjects sorted by name
+subjects_sorted = sorted(G.nodes(data=True), key=lambda x: x[1]['name'])
+
+# Create tabs for different categories
+categories = ["All", "Essential", "Recommended", "Optional"]
+tabs = st.tabs(categories)
+
+for tab, category in zip(tabs, categories):
+    with tab:
+        for node_id, data in subjects_sorted:
+            if category == "All" or data['category'] == category.lower():
+                if data['books']:  # Only show subjects with books
+                    st.subheader(data['name'])
+                    for book in data['books']:
+                        st.markdown(f"- {book}")
+                    st.markdown("---")
+
+import networkx as nx
+import matplotlib.pyplot as plt
+from typing import Dict, List
+
+# [Previous class definitions for Book and Subject]
+# [Previous COLORS and BORDERS definitions]
+# [Previous subjects and connections definitions]
+
+def create_math_roadmap():
+    G = nx.DiGraph()
+    
+    # Add nodes
+    for subject_id, subject in subjects.items():
+        G.add_node(subject_id,
+                  name=subject.name,
+                  category=subject.category,
+                  books=[f"{b.title} by {b.author}" for b in subject.books])
+    
+    # Add edges
+    for start, end in connections:
+        G.add_edge(start, end)
+        
+    return G
+
+def draw_math_roadmap(G):
+    # Create a new figure
+    fig, ax = plt.subplots(figsize=(24, 18))
+    
+    # Use kamada_kawai_layout for better node placement
+    pos = nx.kamada_kawai_layout(G)
+    
+    # Draw nodes by category
+    for category in ["essential", "recommended", "optional"]:
+        nodelist = [n for n,attr in G.nodes(data=True) if attr["category"] == category]
+        nx.draw_networkx_nodes(G, pos,
+                             nodelist=nodelist,
+                             node_color=COLORS[category],
+                             edgecolors=BORDERS[category],
+                             node_size=3000,
+                             ax=ax)
+    
+    # Draw edges
+    nx.draw_networkx_edges(G, pos, 
+                          edge_color='gray',
+                          arrows=True,
+                          arrowsize=20,
+                          width=1.5,
+                          ax=ax)
+    
+    # Add labels
+    labels = {n: G.nodes[n]["name"] for n in G.nodes()}
+    nx.draw_networkx_labels(G, pos,
+                          labels,
+                          font_size=8,
+                          ax=ax)
+    
+    plt.title("Mathematics Learning Roadmap", fontsize=16, pad=20)
+    plt.axis('off')
+    plt.tight_layout()
+    
+    return fig
+
+if __name__ == "__main__":
+    # This will only run if the file is run directly (not imported)
+    G = create_math_roadmap()
+    plt = draw_math_roadmap(G)
+    plt.show()
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
 from typing import Dict, List
 import networkx as nx
 import matplotlib.pyplot as plt
